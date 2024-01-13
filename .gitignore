@@ -1,0 +1,6 @@
+**/.vscode
+**/*.sh
+
+arduino/build
+
+transcriber/output.txt

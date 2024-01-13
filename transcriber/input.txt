@@ -1,0 +1,362 @@
+BPM=138
+FRAMERATE=30
+
+//Bad Apple - Arduino Edition
+//Adapted from https://musescore.com/user/16840431/scores/3449466
+
+// m 1-8
+
+#start comp_bl_rpt 1
+Eb2 e
+Eb3 e
+Eb2 e
+Eb3 e
+Eb2 e
+Eb3 e
+Eb2 s
+Eb3 s
+Eb2 s
+Eb3 s
+#end
+
+#start bl_rpt 1
+>comp_bl_rpt 1
+
+Eb2 e
+Eb3 e
+Eb2 e
+Eb3 e
+Eb2 e
+Eb3 e
+Eb2 e
+Eb2 e
+#end
+
+#start bl_rpt 1.1
+>comp_bl_rpt 1
+
+Eb2 e
+Eb3 e
+Eb2 e
+Eb3 e
+Eb2 q
+Eb2 q
+#end
+
+// m 9-16
+
+#start comp_bl_rpt 2
+Eb2 e.
+Eb3 s
+R s
+Eb3 s
+Db3 s
+Eb3 s
+#end
+
+#start bl_rpt 2
+>comp_bl_rpt 2
+>comp_bl_rpt 2
+>comp_bl_rpt 2
+Eb2 e
+Eb2 s
+Gb2 s
+Ab2 e
+Gb2 s
+Ab2 s
+>comp_bl_rpt 2
+>comp_bl_rpt 2
+>comp_bl_rpt 2
+Ab2 e
+Gb2 s
+Ab2 s
+Gb2 e
+Eb2 s
+Gb2 s
+#end
+
+#start bl_rpt 2.1
+>comp_bl_rpt 2
+>comp_bl_rpt 2
+>comp_bl_rpt 2
+Eb2 e
+Eb2 s
+Gb2 s
+Ab2 e
+Gb2 s
+Ab2 s
+>comp_bl_rpt 2
+>comp_bl_rpt 2
+>comp_bl_rpt 2
+Ab2 te
+Gb2 te
+Ab2 te
+Gb2 te
+Eb2 te
+Gb2 te
+#end
+
+//m 17-33
+
+#start comp_mel_rpt 3
+Eb4 e
+F4 e
+Gb4 e
+Ab4 e
+Bb4 q
+Eb5 e
+Db5 e
+
+Bb4 q
+Eb4 q
+Bb4 e
+Ab4 e
+Gb4 e
+F4 e
+
+Eb4 e
+F4 e
+Gb4 e
+Ab4 e
+Bb4 q
+Ab4 e
+Gb4 e
+#end
+
+#start mel_rpt 3
+>comp_mel_rpt 3
+
+
+F4 e
+Eb4 e
+F4 e
+Gb4 e
+F4 e
+Eb4 e
+D4 e
+F4 e
+#end
+
+#start mel_rpt 3.1
+>comp_mel_rpt 3
+
+F4 q
+Gb4 q
+Ab4 q
+Bb4 q
+#end
+
+// m 33-64
+
+#start comp_mel_rpt 4
+Db5 e
+Eb5 e
+Bb4 e
+Ab4 e
+Bb4 q
+Ab4 e
+Bb4 e
+
+Db5 e
+Eb5 e
+Bb4 e
+Ab4 e
+Bb4 q
+
+#end
+
+#start mel_rpt 4
+>comp_mel_rpt 4
+Ab4 e
+Bb4 e
+
+Ab4 e
+Gb4 e
+F4 e
+Db4 e
+Eb4 q
+Db4 e
+Eb4 e
+
+F4 e
+Gb4 e
+Ab4 e
+Bb4 e
+Eb4 q
+Bb4 e
+Db5 e
+#end
+
+#start mel_rpt 4.1
+>comp_mel_rpt 4
+Eb5 e
+F5 e
+
+Gb5 e
+F5 e
+Eb5 e
+Db5 e
+Bb4 q
+Ab4 e
+Bb4 e
+
+Ab4 e
+Gb4 e
+F4 e
+Db4 e
+Eb4 q
+Bb4 e
+Db5 e
+#end
+
+#start mel_rpt 4.2
+>comp_mel_rpt 4
+Eb5 e
+F5 e
+
+Gb5 e
+F5 e
+Eb5 e
+Db5 e
+Bb4 q
+Ab4 e
+Bb4 e
+
+Ab4 e
+Gb4 e
+F4 e
+Db4 e
+Eb4 q
+R q
+#end
+
+//m 66-81
+
+#start comp_mel_rpt 5
+D5 e
+E5 e
+B4 e
+A4 e
+B4 q
+A4 e
+B4 e
+
+D5 e
+E5 e
+B4 e
+A4 e
+B4 q
+#end
+
+#start mel_rpt 5
+>comp_mel_rpt 5
+A4 e
+B4 e
+
+A4 e
+G4 e
+F#4 e
+D4 e
+E4 q
+D4 e
+E4 e
+
+F#4 e
+G4 e
+A4 e
+B4 e
+E4 q
+B4 e
+D5 e
+#end
+
+#start mel_rpt 5.1
+>comp_mel_rpt 5
+E5 e
+F#5 e
+
+G5 e
+F#5 e
+E5 e
+D5 e
+B4 q
+A4 e
+B4 e
+
+A4 e
+G4 e
+F#4 e
+D4 e
+E4 q
+R q
+#end
+
+
+
+
+
+
+
+>bl_rpt 1
+>bl_rpt 1
+>bl_rpt 1
+>bl_rpt 1.1
+
+>bl_rpt 2
+>bl_rpt 2.1
+
+>mel_rpt 3
+>mel_rpt 3.1
+>mel_rpt 3
+>mel_rpt 3.1
+
+>mel_rpt 4
+>mel_rpt 4
+>mel_rpt 4
+>mel_rpt 4.1
+
+>mel_rpt 4
+>mel_rpt 4
+>mel_rpt 4
+>mel_rpt 4.2 
+
+//DS al Coda
+
+>bl_rpt 2
+>bl_rpt 2.1
+
+>mel_rpt 3
+>mel_rpt 3.1
+>mel_rpt 3
+>mel_rpt 3.1
+
+>mel_rpt 4
+>mel_rpt 4
+>mel_rpt 4
+
+//Coda transition
+>comp_mel_rpt 4
+Eb5 e
+F5 e
+
+Gb5 e
+F5 e
+Eb5 e
+Db5 e
+Bb4 q
+Ab4 e
+Bb4 e
+
+Ab4 e
+Gb4 e
+F4 e
+Db4 e
+Eb4 q
+B4 e
+D5 e
+
+//Coda
+>mel_rpt 5
+>mel_rpt 5
+>mel_rpt 5
+>mel_rpt 5.1
