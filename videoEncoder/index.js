@@ -8,7 +8,7 @@ const { video_path, frames_path, targetRes, audioDelayFrames } = config;
 
 //do the video conversion
 const ffmpeg = require('fluent-ffmpeg');
-//ffmpeg(video_path).size(targetRes.join("x")).autopad(true, 'black').output(frames_path + '/%03d.png').run();
+ffmpeg(video_path).size(targetRes.join("x")).autopad(true, 'black').output(frames_path + '/%03d.png').run();
 
 //figure out all the frames we need to import and process
 let frames = fs.readdirSync(frames_path).filter(file => file.endsWith('.png'));
