@@ -8,8 +8,6 @@ Using PROS, it is possible to load custom images and video onto the screen using
 
 This project remedies that by using an Arduino as a simple tone generator, and interfacing with it through the 8 ADI ports on the V5 Brain. Details about the protocol can be found below.
 
-Currently, this is a WIP, and has only audio playback support.
-
 ## Brain -> Arduino Protocol
 
 The main issue using the ADI ports to communicate is bandwidth. Due to hardware limitations, we are limited to 1 update per 10ms for every port (100Hz). In addition, the scheduler on the Brain makes it nigh impossible to get a consistent delay between updates. Therefore, this protocol is designed to work with variable time between updates, and operate up to 100Hz.

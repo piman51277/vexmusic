@@ -12,16 +12,16 @@
 
 /* Memory size which will be used by the library
  * to store the graphical objects and other data */
-#define LV_MEM_CUSTOM                                                          \
-  1 /*1: use custom malloc/free, 0: use the built-in                           \
+#define LV_MEM_CUSTOM                                \
+  1 /*1: use custom malloc/free, 0: use the built-in \
        lv_mem_alloc/lv_mem_free*/
 #if LV_MEM_CUSTOM == 0
-#define LV_MEM_SIZE                                                            \
-  (32U * 1024U)     /*Size memory used by `lv_mem_alloc` in bytes (>= 2kB)*/
-#define LV_MEM_ATTR /*Complier prefix for big array declaration*/
+#define LV_MEM_SIZE \
+  (32U * 1024U)              /*Size memory used by `lv_mem_alloc` in bytes (>= 2kB)*/
+#define LV_MEM_ATTR          /*Complier prefix for big array declaration*/
 #define LV_MEM_AUTO_DEFRAG 1 /*Automatically defrag on free*/
 #else                        /*LV_MEM_CUSTOM*/
-#define LV_MEM_CUSTOM_INCLUDE                                                  \
+#define LV_MEM_CUSTOM_INCLUDE \
   "kapi.h"                          /*Header for the dynamic memory function*/
 #define LV_MEM_CUSTOM_ALLOC kmalloc /*Wrapper to malloc*/
 #define LV_MEM_CUSTOM_FREE kfree    /*Wrapper to free*/
@@ -41,20 +41,20 @@
  * Required for buffered drawing, opacity and anti-aliasing
  * VDB makes the double buffering, you don't need to deal with it!
  * Typical size: ~1/10 screen */
-#define LV_VDB_SIZE                                                            \
-  (LV_VER_RES *                                                                \
-   LV_HOR_RES) /*Size of VDB in pixel count (1/10 screen size is good for      \
+#define LV_VDB_SIZE                                                       \
+  (LV_VER_RES *                                                           \
+   LV_HOR_RES) /*Size of VDB in pixel count (1/10 screen size is good for \
                   first)*/
-#define LV_VDB_ADR                                                             \
-  0 /*Place VDB to a specific address (e.g. in external RAM) (0: allocate      \
+#define LV_VDB_ADR                                                        \
+  0 /*Place VDB to a specific address (e.g. in external RAM) (0: allocate \
        automatically into RAM)*/
 
 /* Use two Virtual Display buffers (VDB) parallelize rendering and flushing
  * (optional)
  * The flushing should use DMA to write the frame buffer in the background*/
 #define LV_VDB_DOUBLE 0 /*1: Enable the use of 2 VDBs*/
-#define LV_VDB2_ADR                                                            \
-  0 /*Place VDB2 to a specific address (e.g. in external RAM) (0: allocate     \
+#define LV_VDB2_ADR                                                        \
+  0 /*Place VDB2 to a specific address (e.g. in external RAM) (0: allocate \
        automatically into RAM)*/
 
 /* Enable anti-aliasing (lines, and radiuses will be smoothed) */
@@ -70,13 +70,13 @@
 
 /*Input device settings*/
 #define LV_INDEV_READ_PERIOD 50 /*Input device read period in milliseconds*/
-#define LV_INDEV_POINT_MARKER                                                  \
-  0 /*Mark the pressed points  (required: USE_LV_REAL_DRAW = 1)*/
+#define LV_INDEV_POINT_MARKER \
+  0                            /*Mark the pressed points  (required: USE_LV_REAL_DRAW = 1)*/
 #define LV_INDEV_DRAG_LIMIT 10 /*Drag threshold in pixels */
-#define LV_INDEV_DRAG_THROW                                                    \
-  20 /*Drag throw slow-down in [%]. Greater value means faster slow-down */
+#define LV_INDEV_DRAG_THROW \
+  20                                 /*Drag throw slow-down in [%]. Greater value means faster slow-down */
 #define LV_INDEV_LONG_PRESS_TIME 400 /*Long press time in milliseconds*/
-#define LV_INDEV_LONG_PRESS_REP_TIME                                           \
+#define LV_INDEV_LONG_PRESS_REP_TIME \
   100 /*Repeated trigger period in long press [ms] */
 
 /*Color settings*/
@@ -86,7 +86,7 @@
                    keying)*/
 
 /*Text settings*/
-#define LV_TXT_UTF8 1 /*Enable UTF-8 coded Unicode character usage */
+#define LV_TXT_UTF8 1                /*Enable UTF-8 coded Unicode character usage */
 #define LV_TXT_BREAK_CHARS " ,.;:-_" /*Can break texts on these chars*/
 #define LV_TXT_LINE_BREAK_LONG_LEN 12
 #define LV_TXT_LINE_BREAK_LONG_PRE_MIN_LEN 3
@@ -97,14 +97,14 @@
 #define USE_LV_SHADOW 1    /*1: Enable shadows*/
 #define USE_LV_GROUP 1     /*1: Enable object groups (for keyboards)*/
 #define USE_LV_GPU 0       /*1: Enable GPU interface*/
-#define USE_LV_REAL_DRAW                                                       \
-  1 /*1: Enable function which draw directly to the frame buffer instead of    \
-       VDB (required if LV_VDB_SIZE = 0)*/
+#define USE_LV_REAL_DRAW                                                                            \
+  1                         /*1: Enable function which draw directly to the frame buffer instead of \
+                               VDB (required if LV_VDB_SIZE = 0)*/
 #define USE_LV_FILESYSTEM 1 /*1: Enable file system (required by images*/
 #define USE_LV_MULTI_LANG 1
 
 /*Compiler attributes*/
-#define LV_ATTRIBUTE_TICK_INC /* Define a custom attribute to tick increment   \
+#define LV_ATTRIBUTE_TICK_INC /* Define a custom attribute to tick increment \
                                  function */
 #define LV_ATTRIBUTE_TASK_HANDLER
 #define LV_ATTRIBUTE_MEM_ALIGN
@@ -116,13 +116,13 @@
  *  THEME USAGE
  *================*/
 #define LV_THEME_LIVE_UPDATE 1
-#define USE_LV_THEME_TEMPL 0 /*Just for test*/
-#define USE_LV_THEME_DEFAULT 0 /*Built mainly from the built-in styles. Consumes very few RAM*/
-#define USE_LV_THEME_ALIEN 1 /*Dark futuristic theme*/
-#define USE_LV_THEME_NIGHT 1 /*Dark elegant theme*/
-#define USE_LV_THEME_MONO 1 /*Mono color theme for monochrome displays*/
+#define USE_LV_THEME_TEMPL 0    /*Just for test*/
+#define USE_LV_THEME_DEFAULT 0  /*Built mainly from the built-in styles. Consumes very few RAM*/
+#define USE_LV_THEME_ALIEN 1    /*Dark futuristic theme*/
+#define USE_LV_THEME_NIGHT 1    /*Dark elegant theme*/
+#define USE_LV_THEME_MONO 1     /*Mono color theme for monochrome displays*/
 #define USE_LV_THEME_MATERIAL 1 /*Flat theme with bold colors and light shadows*/
-#define USE_LV_THEME_ZEN 1 /*Peaceful, mainly light theme */
+#define USE_LV_THEME_ZEN 1      /*Peaceful, mainly light theme */
 
 /*==================
  *    FONT USAGE
@@ -131,7 +131,7 @@
 /* More info about fonts: https://littlevgl.com/basics#fonts
  * To enable a built-in font use 1,2,4 or 8 values
  * which will determine the bit-per-pixel */
-#define LV_FONT_DEFAULT                                                        \
+#define LV_FONT_DEFAULT \
   &lv_font_dejavu_20 /*Always set a default font from the built-in fonts*/
 
 #define USE_LV_FONT_DEJAVU_10 4
@@ -170,8 +170,8 @@
 /*===================
  *  LV_OBJ SETTINGS
  *==================*/
-#define LV_OBJ_FREE_NUM_TYPE                                                   \
-  uint32_t /*Type of free number attribute (comment out disable free number)*/
+#define LV_OBJ_FREE_NUM_TYPE \
+  uint32_t                /*Type of free number attribute (comment out disable free number)*/
 #define LV_OBJ_FREE_PTR 1 /*Enable the free pointer attribute*/
 
 /*==================
@@ -188,16 +188,16 @@
 /*Label (dependencies: -*/
 #define USE_LV_LABEL 1
 #if USE_LV_LABEL != 0
-#define LV_LABEL_SCROLL_SPEED                                                  \
-  25 /*Hor, or ver. scroll speed [px/sec] in 'LV_LABEL_LONG_SCROLL/ROLL'       \
+#define LV_LABEL_SCROLL_SPEED                                            \
+  25 /*Hor, or ver. scroll speed [px/sec] in 'LV_LABEL_LONG_SCROLL/ROLL' \
         mode*/
 #endif
 
 /*Image (dependencies: lv_label*/
 #define USE_LV_IMG 1
 #if USE_LV_IMG != 0
-#  define LV_IMG_CF_INDEXED 1
-#  define LV_IMG_CF_ALPHA 1
+#define LV_IMG_CF_INDEXED 1
+#define LV_IMG_CF_ALPHA 1
 #endif
 
 /*Line (dependencies: -*/
@@ -220,14 +220,13 @@
 /*Tab (dependencies: lv_page, lv_btnm)*/
 #define USE_LV_TABVIEW 1
 #if USE_LV_TABVIEW != 0
-#define LV_TABVIEW_ANIM_TIME                                                   \
+#define LV_TABVIEW_ANIM_TIME \
   300 /*Time of slide animation [ms] (0: no animation)*/
 #endif
 #define USE_LV_TILEVIEW 1
 #if USE_LV_TILEVIEW
-#  define LV_TILEVIEW_ANIM_TIME 300
+#define LV_TILEVIEW_ANIM_TIME 300
 #endif
-
 
 /*************************
  * Data visualizer objects
@@ -247,7 +246,7 @@
 
 #define USE_LV_TABLE 1
 #if USE_LV_TABLE
-#  define LV_TABLE_COL_MAX 12
+#define LV_TABLE_COL_MAX 12
 #endif
 
 /*LED (dependencies: -)*/
@@ -268,9 +267,9 @@
 
 #define USE_PRELOAD 1
 #if USE_LV_PRELOAD != 0
-#  define LV_PRELOAD_DEF_ARC_LENGTH 60
-#  define LV_PRELOAD_DEF_SPIN_TIME 1000
-#  define LV_PRELOAD_DEF_ANIM LV_PRELOAD_TYPE_SPINNING_ARC
+#define LV_PRELOAD_DEF_ARC_LENGTH 60
+#define LV_PRELOAD_DEF_SPIN_TIME 1000
+#define LV_PRELOAD_DEF_ANIM LV_PRELOAD_TYPE_SPINNING_ARC
 #endif
 
 #define USE_LV_CANVAS 1
@@ -281,12 +280,12 @@
 /*Button (dependencies: lv_cont*/
 #define USE_LV_BTN 1
 #if USE_LV_BTN != 0
-#  define LV_BTN_INK_EFFECT 1
+#define LV_BTN_INK_EFFECT 1
 #endif
 
 #define USE_LV_IMGBTN 1
 #if USE_LV_IMGBTN
-#  define LV_IMGBTN_TILED 0
+#define LV_IMGBTN_TILED 0
 #endif
 
 /*Button matrix (dependencies: -)*/
@@ -302,23 +301,23 @@
  * ))*/
 #define USE_LV_LIST 1
 #if USE_LV_LIST != 0
-#define LV_LIST_FOCUS_TIME                                                     \
-  100 /*Default animation time of focusing to a list element [ms] (0: no       \
+#define LV_LIST_FOCUS_TIME                                               \
+  100 /*Default animation time of focusing to a list element [ms] (0: no \
          animation)  */
 #endif
 
 /*Drop down list (dependencies: lv_page, lv_label)*/
 #define USE_LV_DDLIST 1
 #if USE_LV_DDLIST != 0
-#define LV_DDLIST_ANIM_TIME                                                    \
+#define LV_DDLIST_ANIM_TIME \
   200 /*Open and close default animation time [ms] (0: no animation)*/
 #endif
 
 /*Roller (dependencies: lv_ddlist)*/
 #define USE_LV_ROLLER 1
 #if USE_LV_ROLLER != 0
-#define LV_ROLLER_ANIM_TIME                                                    \
-  200 /*Focus animation time [ms] (0: no                                       \
+#define LV_ROLLER_ANIM_TIME              \
+  200 /*Focus animation time [ms] (0: no \
          animation)*/
 #endif
 
@@ -335,7 +334,7 @@
 #endif
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
-#  define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #endif
 #include "display/lv_conf_checker.h"
 #endif /*LV_CONF_H*/

@@ -4,3 +4,8 @@
 arduino/build
 
 transcriber/output.txt
+
+videoEncoder/node_modules
+videoEncoder/config.json
+videoEncoder/*.bindat
+videoEncoder/*.txt
