@@ -36,9 +36,6 @@ const frameCountBuffer = Buffer.alloc(4);
 frameCountBuffer.writeUInt32LE(frameCount); //this is little endian
 outStream.write(frameCountBuffer);
 
-const frameSizeBuffer = Buffer.alloc(4);
-frameSizeBuffer.writeUInt32LE(frameSize / 8 + 1);
-outStream.write(frameSizeBuffer);
 
 //read in the interpreted audio
 let audio = fs.readFileSync(path.join(__dirname, 'audio.txt'), "utf-8").split("\n").map(Number);
@@ -46,6 +43,66 @@ let [bpm, fps, audioFrameCount] = audio.slice(0, 3);
 audio = audio.slice(3);
 
 const PNG = require('pngjs').PNG;
+
+function compressFrame(frameData) {
+
+  //inline function to check if a pixel is black
+  const isBlack = (ind) => frameData[ind * 4] < 50;
+
+  let firstBlack = isBlack(0);
+  let pixelCount = targetRes[0] * targetRes[1];
+
+  let isCurrentBlack = firstBlack;
+  let currentCount = 0;
+  let runs = [];
+
+  for (let i = 1; i < pixelCount; i++) {
+    const black = isBlack(i);
+    if (black === isCurrentBlack) {
+      currentCount++;
+    } else {
+
+      //is runs over the 16 bit max?
+      if (currentCount > 65535) {
+        //split it into two
+        runs.push(65535);
+        runs.push(0);
+        currentCount -= 65535;
+      }
+
+      runs.push(currentCount);
+      currentCount = 1;
+      isCurrentBlack = black;
+    }
+  }
+  if (currentCount > 0) {
+    //is runs over the 16 bit max?
+    if (currentCount > 65535) {
+      //split it into two
+      runs.push(65535);
+      runs.push(0);
+      currentCount -= 65535;
+    }
+    runs.push(currentCount);
+  }
+
+  let buf = Buffer.alloc(runs.length * 2 + 3);
+
+  //uint16 for number of runs
+  buf.writeUInt16LE(runs.length, 0);
+
+  //uint16 for first pixel color
+  buf.writeUInt8(firstBlack ? 1 : 0, 2);
+
+  //uint16 for each run
+  for (let i = 0; i < runs.length; i++) {
+    buf.writeUInt16LE(runs[i], i * 2 + 3);
+  }
+
+  return buf;
+}
+
+
 
 async function processFrames() {
   for (let i = 0; i < frameCount; i++) {
@@ -61,20 +118,7 @@ async function processFrames() {
         });
     });
 
-    const frameBuffer = Buffer.alloc(frameSize / 8);
-
-    //for every 8 pixels, collapse them into a single byte (since its bw)
-    for (let j = 0; j < frameSize / 8; j++) {
-      let byte = 0;
-      for (let k = 0; k < 8; k++) {
-        const pixel = frameData[((j * 8) + k) * 4]; //only read off the red channel
-        if (pixel < 50) {
-          byte |= 1 << k;
-        }
-      }
-      frameBuffer.writeUInt8(byte, j);
-    }
-
+    const frameBuffer = compressFrame(frameData);
     outStream.write(frameBuffer);
 
     //write the audio data

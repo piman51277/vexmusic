@@ -4,6 +4,9 @@
 #include <fstream>
 #include <string>
 
+#include <chrono>
+typedef std::chrono::high_resolution_clock Clock;
+
 void initialize()
 {
 }
@@ -53,6 +56,12 @@ void opcontrol()
 	while (true)
 	{
 
+		printf("Starting video playback\n");
+
+		// start the clock
+		Clock c1;
+		auto t1 = c1.now();
+
 		// create the canvas
 		lv_obj_t *canvas = nullptr;
 		canvas = lv_canvas_create(lv_scr_act(), NULL);
@@ -77,20 +86,18 @@ void opcontrol()
 		uint32_t fcount;
 		vidfile.read((char *)&fcount, 4);
 
-		// read in the frame duration
-		uint32_t fsize;
-		vidfile.read((char *)&fsize, 4);
+		auto t2 = c1.now();
 
-		// this should be (480 * 240 )/8 + 1
-		if (fsize != 14401)
-		{
-			return;
-		}
+		int headerReadTime = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+		printf("Header read in %d ms\n", headerReadTime);
 
 		int startTime = pros::millis();
 		int lastFrame = 0;
 		int readFrames = -1;
-		uint8_t *frame = new uint8_t[fsize];
+
+		int fsize = 0;
+		uint16_t frame[3000] = {};
+		std::fill_n(frame, 3000, 0);
 
 		// decompressed buffer (original size is 480 * 240)
 		lv_color_t *decomp = new lv_color_t[480 * 240];
@@ -107,16 +114,34 @@ void opcontrol()
 			{
 
 				// have we read this frame yet?
+
+				bool firstBlack;
+				uint16_t runCount;
+				uint8_t note;
 				if (frameID > readFrames)
 				{
+					auto t3 = c1.now();
+
+					vidfile.read((char *)&runCount, 2);
+
+					vidfile.read((char *)&firstBlack, 1);
+
 					// read in the frame
-					vidfile.read((char *)frame, fsize);
+					vidfile.read((char *)frame, runCount * 2);
 					readFrames++;
+
+					// read in the note
+					vidfile.read((char *)&note, 1);
+
+					auto t4 = c1.now();
+
+					int frameReadTime = std::chrono::duration_cast<std::chrono::milliseconds>(t4 - t3).count();
+					printf("Frame %d read in %d ms\n", readFrames, frameReadTime);
 				}
+
 				lastFrame = frameID;
 
 				// play audio
-				uint8_t note = frame[fsize - 1];
 
 				bool isStart = false;
 				if (note > 64)
@@ -128,14 +153,16 @@ void opcontrol()
 				sendSignal(note, isStart);
 
 				// decompress the frame
-				for (int i = 0; i < (480 * 240) / 8; i++)
+				bool color = firstBlack;
+				int pix_ptr = 0;
+				for (int rid = 0; rid < runCount; rid++)
 				{
-					uint8_t byte = frame[i];
-					for (int j = 0; j < 8; j++)
+					for (int i = pix_ptr; i < pix_ptr + (int)frame[rid]; i++)
 					{
-						uint8_t bit = (byte >> j) & 1;
-						decomp[i * 8 + j] = bit ? LV_COLOR_BLACK : LV_COLOR_WHITE;
+						decomp[i] = color ? LV_COLOR_BLACK : LV_COLOR_WHITE;
 					}
+					color = !color;
+					pix_ptr += frame[rid];
 				}
 
 				lv_canvas_set_buffer(canvas, decomp, 480, 240, LV_IMG_CF_TRUE_COLOR);
@@ -146,7 +173,6 @@ void opcontrol()
 		}
 
 		// clean up
-		delete[] frame;
 		delete[] decomp;
 
 		// close the file
