@@ -50,97 +50,112 @@ void opcontrol()
 	int fps = 30;
 	double frameDuration = (1000.0) / (double)fps;
 
-	// create the canvas
-	lv_obj_t *canvas = nullptr;
-	canvas = lv_canvas_create(lv_scr_act(), NULL);
-
-	std::ifstream vidfile;
-	vidfile.open("/usd/vid.bindat");
-
-	// read in the first 8 bytes
-	uint8_t ftypeHeader[8];
-	vidfile.read((char *)ftypeHeader, 8);
-
-	// this needs to be PIMANVID
-	for (int i = 0; i < 8; i++)
+	while (true)
 	{
-		if (ftypeHeader[i] != correctTypeHeader[i])
+
+		// create the canvas
+		lv_obj_t *canvas = nullptr;
+		canvas = lv_canvas_create(lv_scr_act(), NULL);
+
+		std::ifstream vidfile;
+		vidfile.open("/usd/vid.bindat");
+
+		// read in the first 8 bytes
+		uint8_t ftypeHeader[8];
+		vidfile.read((char *)ftypeHeader, 8);
+
+		// this needs to be PIMANVID
+		for (int i = 0; i < 8; i++)
+		{
+			if (ftypeHeader[i] != correctTypeHeader[i])
+			{
+				return;
+			}
+		}
+
+		// read in the frame count
+		uint32_t fcount;
+		vidfile.read((char *)&fcount, 4);
+
+		// read in the frame duration
+		uint32_t fsize;
+		vidfile.read((char *)&fsize, 4);
+
+		// this should be (480 * 240 )/8 + 1
+		if (fsize != 14401)
 		{
 			return;
 		}
-	}
 
-	// read in the frame count
-	uint32_t fcount;
-	vidfile.read((char *)&fcount, 4);
+		int startTime = pros::millis();
+		int lastFrame = 0;
+		int readFrames = -1;
+		uint8_t *frame = new uint8_t[fsize];
 
-	// read in the frame duration
-	uint32_t fsize;
-	vidfile.read((char *)&fsize, 4);
+		// decompressed buffer (original size is 480 * 240)
+		lv_color_t *decomp = new lv_color_t[480 * 240];
 
-	// this should be (480 * 240 )/8 + 1
-	if (fsize != 14401)
-	{
-		return;
-	}
-
-	int startTime = pros::millis();
-	int lastFrame = 0;
-	int readFrames = -1;
-	uint8_t *frame = new uint8_t[fsize];
-
-	// decompressed buffer (original size is 480 * 240)
-	lv_color_t *decomp = new lv_color_t[480 * 240];
-
-	// since the brain can't handle <10 ms delay over ADI ports,
-	// we will clock it higher and only send out signals when nessessary
-	while (lastFrame < fcount)
-	{
-		int currentTime = pros::millis();
-		double delta = currentTime - startTime;
-		int frameID = (int)(delta / frameDuration);
-
-		if (frameID != lastFrame)
+		// since the brain can't handle <10 ms delay over ADI ports,
+		// we will clock it higher and only send out signals when nessessary
+		while (lastFrame < fcount)
 		{
+			int currentTime = pros::millis();
+			double delta = currentTime - startTime;
+			int frameID = (int)(delta / frameDuration);
 
-			// have we read this frame yet?
-			if (frameID > readFrames)
+			if (frameID != lastFrame)
 			{
-				// read in the frame
-				vidfile.read((char *)frame, fsize);
-				readFrames++;
-			}
-			lastFrame = frameID;
 
-			// play audio
-			uint8_t note = frame[fsize - 1];
-
-			bool isStart = false;
-			if (note > 64)
-			{
-				note -= 64;
-				isStart = true;
-			}
-
-			sendSignal(note, isStart);
-
-			// decompress the frame
-			for (int i = 0; i < (480 * 240) / 8; i++)
-			{
-				uint8_t byte = frame[i];
-				for (int j = 0; j < 8; j++)
+				// have we read this frame yet?
+				if (frameID > readFrames)
 				{
-					uint8_t bit = (byte >> j) & 1;
-					decomp[i * 8 + j] = bit ? LV_COLOR_BLACK : LV_COLOR_WHITE;
+					// read in the frame
+					vidfile.read((char *)frame, fsize);
+					readFrames++;
 				}
+				lastFrame = frameID;
+
+				// play audio
+				uint8_t note = frame[fsize - 1];
+
+				bool isStart = false;
+				if (note > 64)
+				{
+					note -= 64;
+					isStart = true;
+				}
+
+				sendSignal(note, isStart);
+
+				// decompress the frame
+				for (int i = 0; i < (480 * 240) / 8; i++)
+				{
+					uint8_t byte = frame[i];
+					for (int j = 0; j < 8; j++)
+					{
+						uint8_t bit = (byte >> j) & 1;
+						decomp[i * 8 + j] = bit ? LV_COLOR_BLACK : LV_COLOR_WHITE;
+					}
+				}
+
+				lv_canvas_set_buffer(canvas, decomp, 480, 240, LV_IMG_CF_TRUE_COLOR);
 			}
 
-			lv_canvas_set_buffer(canvas, decomp, 480, 240, LV_IMG_CF_TRUE_COLOR);
+			// min delay is 2
+			pros::delay(2);
 		}
 
+		// clean up
+		delete[] frame;
+		delete[] decomp;
 
-		// min delay is 2
-		pros::delay(2);
+		// close the file
+		vidfile.close();
+
+		// destroy the canvas
+		lv_obj_del(canvas);
+
+		pros::delay(1000);
 	}
 
 	printf("Done!\n");
