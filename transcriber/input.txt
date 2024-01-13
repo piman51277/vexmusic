@@ -3,6 +3,7 @@ FRAMERATE=30
 
 //Bad Apple - Arduino Edition
 //Adapted from https://musescore.com/user/16840431/scores/3449466
+//The actual file is in /assets/BadApple.mscz (MSC4)
 
 // m 1-8
 
