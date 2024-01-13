@@ -8,7 +8,8 @@ const { video_path, frames_path, targetRes, audioDelayFrames } = config;
 
 //do the video conversion
 const ffmpeg = require('fluent-ffmpeg');
-ffmpeg(video_path).size(targetRes.join("x")).autopad(true, 'black').output(frames_path + '/%03d.png').run();
+//use .autopad(true, 'black') to preserve aspect
+ffmpeg(video_path).size(targetRes.join("x")).fps(30).output(frames_path + '/%03d.png').run();
 
 //figure out all the frames we need to import and process
 let frames = fs.readdirSync(frames_path).filter(file => file.endsWith('.png'));
@@ -19,7 +20,7 @@ frames = frames.sort((a, b) => {
 });
 
 //this needs to be a multiple of 8
-const frameSize = Math.floor((targetRes[0] * targetRes[1]) / 8) * 8;
+const frameSize = targetRes[0] * targetRes[1] * 2; //16 bit color
 const frameCount = frames.length;
 
 //create a write stream for the output file
@@ -37,7 +38,7 @@ frameCountBuffer.writeUInt32LE(frameCount); //this is little endian
 outStream.write(frameCountBuffer);
 
 const frameSizeBuffer = Buffer.alloc(4);
-frameSizeBuffer.writeUInt32LE(frameSize / 8 + 1);
+frameSizeBuffer.writeUInt32LE(frameSize + 1);
 outStream.write(frameSizeBuffer);
 
 //read in the interpreted audio
@@ -46,6 +47,22 @@ let [bpm, fps, audioFrameCount] = audio.slice(0, 3);
 audio = audio.slice(3);
 
 const PNG = require('pngjs').PNG;
+
+function rgbTo16Bit(r, g, b) {
+  //we'll use 5 bits to represent each
+
+  //our range goes from 0-255 to 0-31
+  let rPacked = Math.floor(r / 8);
+  let gPacked = Math.floor(r / 8);
+  let bPacked = Math.floor(r / 8);
+
+  let outNum = 0;
+  outNum |= rPacked << 11;
+  outNum |= gPacked << 6;
+  outNum |= bPacked << 1;
+
+  return outNum;
+}
 
 async function processFrames() {
   for (let i = 0; i < frameCount; i++) {
@@ -61,18 +78,17 @@ async function processFrames() {
         });
     });
 
-    const frameBuffer = Buffer.alloc(frameSize / 8);
+    const frameBuffer = Buffer.alloc(frameSize);
 
-    //for every 8 pixels, collapse them into a single byte (since its bw)
-    for (let j = 0; j < frameSize / 8; j++) {
-      let byte = 0;
-      for (let k = 0; k < 8; k++) {
-        const pixel = frameData[((j * 8) + k) * 4]; //only read off the red channel
-        if (pixel < 50) {
-          byte |= 1 << k;
-        }
-      }
-      frameBuffer.writeUInt8(byte, j);
+    //for every pixel
+    for (let j = 0; j < frameSize / 2; j++) {
+      const r = frameData[j * 4];
+      const g = frameData[j * 4 + 1];
+      const b = frameData[j * 4 + 2];
+
+      const outNum = rgbTo16Bit(r, g, b);
+
+      frameBuffer.writeUInt16LE(outNum, j * 2);
     }
 
     outStream.write(frameBuffer);

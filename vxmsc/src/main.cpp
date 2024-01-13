@@ -81,9 +81,13 @@ void opcontrol()
 		uint32_t fsize;
 		vidfile.read((char *)&fsize, 4);
 
-		// this should be (480 * 240 )/8 + 1
-		if (fsize != 14401)
+		printf("Frame count: %d\n", fcount);
+		printf("Frame size: %d\n", fsize);
+
+		// this should be (480 * 240 )*2+ 1
+		if (fsize != (480 * 240) * 2 + 1)
 		{
+			printf("Invalid frame size!\n");
 			return;
 		}
 
@@ -128,14 +132,24 @@ void opcontrol()
 				sendSignal(note, isStart);
 
 				// decompress the frame
-				for (int i = 0; i < (480 * 240) / 8; i++)
+				for (int i = 0; i < (480 * 240) * 2; i++)
 				{
-					uint8_t byte = frame[i];
-					for (int j = 0; j < 8; j++)
-					{
-						uint8_t bit = (byte >> j) & 1;
-						decomp[i * 8 + j] = bit ? LV_COLOR_BLACK : LV_COLOR_WHITE;
-					}
+					uint8_t pixelp1 = frame[i * 2];
+					uint8_t pixelp2 = frame[i * 2 + 1];
+
+					uint16_t pixel = (pixelp1 << 8) | pixelp2;
+
+					uint8_t r = (pixel >> 11) & 0x1F;
+					uint8_t g = (pixel >> 5) & 0x3F;
+					uint8_t b = pixel & 0x1F;
+
+					r = (r << 3) | (r >> 2);
+					g = (g << 2) | (g >> 4);
+					b = (b << 3) | (b >> 2);
+
+					decomp[i].blue = b;
+					decomp[i].green = g;
+					decomp[i].red = r;
 				}
 
 				lv_canvas_set_buffer(canvas, decomp, 480, 240, LV_IMG_CF_TRUE_COLOR);
