@@ -1,3 +1,5 @@
+#include <toneAC.h>
+
 #define clk_pin 2   // ADI A
 #define data1_pin 3 // ADI B
 #define data2_pin 4 // ADI C
@@ -5,7 +7,7 @@
 #define data4_pin 6 // ADI E
 #define data5_pin 7 // ADI F
 #define data6_pin 8 // ADI G
-#define data7_pin 9 // ADI H
+#define data7_pin 11 // ADI H
 #define buzzer_pin 10
 
 /**
@@ -37,7 +39,7 @@ void playNote(uint8_t id)
   if (id == 60)
   {
     Serial.println("Rest");
-    noTone(buzzer_pin);
+    noToneAC();
     return;
   }
 
@@ -51,7 +53,7 @@ void playNote(uint8_t id)
   Serial.print(frequency);
   Serial.println(" Hz)");
 
-  tone(buzzer_pin, frequency);
+  toneAC(frequency);
 }
 
 void setup()
@@ -108,8 +110,8 @@ void loop()
     if (digitalRead(data1_pin) == HIGH)
     {
       // add a short delay
-      noTone(buzzer_pin);
-      delay(5);
+      noToneAC();
+      delay(2);
     }
 
     // play note
@@ -119,7 +121,7 @@ void loop()
   // mute it if no input for 1 second
   if (millis() - lastInputTime > 1000)
   {
-    noTone(buzzer_pin);
+    noToneAC();
   }
 
   // delay
